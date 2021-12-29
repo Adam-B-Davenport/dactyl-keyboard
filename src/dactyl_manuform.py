@@ -1,7 +1,8 @@
 import numpy as np
 from numpy import pi
 import os.path as path
-import getopt, sys
+import getopt
+import sys
 import json
 import os
 import copy
@@ -76,7 +77,7 @@ else:
 ####################################################
 
 
-debug_exports = False 
+debug_exports = False
 debug_trace = False
 
 def debugprint(info):
@@ -94,10 +95,7 @@ if nrows > 5:
 centerrow = nrows - centerrow_offset
 
 lastrow = nrows - 1
-if reduced_outer_keys:
-    cornerrow = lastrow - 1
-else:
-    cornerrow = lastrow
+cornerrow = lastrow - 1
 lastcol = ncols - 1
 
 
@@ -423,6 +421,15 @@ def rotate_around_y(position, angle):
     return np.matmul(t_matrix, position)
 
 
+def rotate_around_z(position, angle):
+    t_matrix = np.array(
+        [
+            [np.cos(angle), 0, np.sin(angle)],
+            [-np.sin(angle), 0, np.cos(angle)],
+            [0, 1, 0],
+        ]
+    )
+    return np.matmul(t_matrix, position)
 
 
 def apply_key_geometry(
@@ -430,12 +437,11 @@ def apply_key_geometry(
         translate_fn,
         rotate_x_fn,
         rotate_y_fn,
+        rotate_z_fn,
         column,
         row,
         column_style=column_style,
 ):
-
-    debugprint('apply_key_geometry()')
 
     column_angle = beta * (centercol - column)
 
@@ -468,6 +474,9 @@ def apply_key_geometry(
         shape = translate_fn(shape, [0, 0, column_radius])
         shape = translate_fn(shape, column_offset(column))
 
+        if column >= 4 and rotate_z_fn is not None:
+            shape = rotate_z_fn(shape, -0.15)
+
     shape = rotate_y_fn(shape, tenting_angle)
     shape = translate_fn(shape, [0, 0, keyboard_z_offset])
 
@@ -483,10 +492,13 @@ def y_rot(shape, angle):
     # debugprint('y_rot()')
     return rotate(shape, [0, rad2deg(angle), 0])
 
+def z_rot(shape, angle):
+    return rotate(shape, [0, 0, rad2deg(angle)])
+
 
 def key_place(shape, column, row):
     debugprint('key_place()')
-    return apply_key_geometry(shape, translate, x_rot, y_rot, column, row)
+    return apply_key_geometry(shape, translate, x_rot, y_rot, z_rot, column, row)
 
 
 def add_translate(shape, xyz):
@@ -500,7 +512,7 @@ def add_translate(shape, xyz):
 def key_position(position, column, row):
     debugprint('key_position()')
     return apply_key_geometry(
-        position, add_translate, rotate_around_x, rotate_around_y, column, row
+        position, add_translate, rotate_around_x, rotate_around_y, None, column, row
     )
 
 
@@ -510,7 +522,7 @@ def key_holes(side="right"):
     holes = []
     for column in range(ncols):
         for row in range(nrows):
-            if (column in [2, 3]) or (not row == lastrow) or (not reduced_outer_keys):
+            if (not row == lastrow):
                 holes.append(key_place(single_plate(side=side), column, row))
 
     shape = union(holes)
@@ -595,10 +607,7 @@ def connectors():
     debugprint('connectors()')
     hulls = []
     for column in range(ncols - 1):
-        if (column in [2]) or (not reduced_outer_keys):
-            iterrows = lastrow+1
-        else:
-            iterrows = lastrow
+        iterrows = lastrow
         for row in range(iterrows):  # need to consider last_row?
             # for row in range(nrows):  # need to consider last_row?
             places = []
@@ -609,10 +618,7 @@ def connectors():
             hulls.append(triangle_hulls(places))
 
     for column in range(ncols):
-        if (column in [2, 3]) or (not reduced_outer_keys):
-            iterrows = lastrow
-        else:
-            iterrows = cornerrow
+        iterrows = cornerrow
         for row in range(iterrows):
             places = []
             places.append(key_place(web_post_bl(), column, row))
@@ -622,8 +628,8 @@ def connectors():
             hulls.append(triangle_hulls(places))
 
     for column in range(ncols - 1):
-        if (column in [2]) or (not reduced_outer_keys):
-            iterrows = lastrow
+        if column in [2]:
+            iterrows = cornerrow
         else:
             iterrows = cornerrow
         for row in range(iterrows):
@@ -634,21 +640,20 @@ def connectors():
             places.append(key_place(web_post_tl(), column + 1, row + 1))
             hulls.append(triangle_hulls(places))
 
-        if reduced_outer_keys:
-            if column == 1:
-                places = []
-                places.append(key_place(web_post_bl(), column + 1, iterrows))
-                places.append(key_place(web_post_br(), column, iterrows))
-                places.append(key_place(web_post_tl(), column + 1, iterrows + 1))
-                places.append(key_place(web_post_bl(), column + 1, iterrows + 1))
-                hulls.append(triangle_hulls(places))
-            if column == 3:
-                places = []
-                places.append(key_place(web_post_br(), column, iterrows))
-                places.append(key_place(web_post_bl(), column + 1, iterrows))
-                places.append(key_place(web_post_tr(), column, iterrows + 1))
-                places.append(key_place(web_post_br(), column, iterrows + 1))
-                hulls.append(triangle_hulls(places))
+        # if column == 1:
+        #     places = []
+        #     places.append(key_place(web_post_bl(), column + 1, iterrows))
+        #     places.append(key_place(web_post_br(), column, iterrows))
+        #     places.append(key_place(web_post_tl(), column + 1, iterrows + 1))
+        #     places.append(key_place(web_post_bl(), column + 1, iterrows + 1))
+        #     hulls.append(triangle_hulls(places))
+        # if column == 3:
+        #     places = []
+        #     places.append(key_place(web_post_br(), column, iterrows))
+        #     places.append(key_place(web_post_bl(), column + 1, iterrows))
+        #     places.append(key_place(web_post_tr(), column, iterrows + 1))
+        #     places.append(key_place(web_post_br(), column, iterrows + 1))
+        #     hulls.append(triangle_hulls(places))
 
 
     return union(hulls)
@@ -946,8 +951,7 @@ def default_thumb(side="right"):
     shape = union([shape, default_thumb_15x_layout(double_plate(), plate=False)])
     #shape = add([shape, default_thumb_15x_layout(rotate(single_plate(side=side), (0, 0, -90)))])
     #shape = add([shape, default_thumb_15x_layout(double_plate(), plate=False)])
-    # if plate_pcb_clear:
-    #     shape = difference(shape, [default_thumb_pcb_plate_cutouts()])
+    shape = difference(shape, [default_thumb_pcb_plate_cutouts()])
     return shape
 
 
@@ -1131,7 +1135,6 @@ def default_thumb_connectors():
                     key_place(web_post_bl(), 2, lastrow),
                     default_thumb_tr_place(thumb_post_br()),
                     key_place(web_post_br(), 2, lastrow),
-                    key_place(web_post_bl(), 3, lastrow),
                 ]
             )
         )
@@ -1347,16 +1350,37 @@ def minidox_thumb_tl_place(shape):
     return shape
 
 def minidox_thumb_tr_place(shape):
-    shape = rotate(shape, [14, -15, 10])
+    shape = rotate(shape, [12, -33, 22])
     shape = translate(shape, thumborigin())
-    shape = translate(shape, [-15, -10, 5])
+    shape = translate(shape, [-19, -9, 7])
     return shape
 
 def minidox_thumb_ml_place(shape):
-    shape = rotate(shape, [6, -34, 40])
+    shape = rotate(shape, [10.5, -13, 28])
     shape = translate(shape, thumborigin())
-    shape = translate(shape, [-53, -26, -12])
+    shape = translate(shape, [-52, -24, -8])
     return shape
+
+def minidox_thumb_mr_place(shape):
+    shape = rotate(shape, [10, -23, 25])
+    shape = translate(shape, thumborigin())
+    shape = translate(shape, [-23, -34, -6])
+    return shape
+
+
+def minidox_thumb_bl_place(shape):
+    shape = rotate(shape, [6, -32, 35])
+    shape = translate(shape, thumborigin())
+    shape = translate(shape, [-51, -25, -11.5])
+    return shape
+
+
+def minidox_thumb_br_place(shape):
+    shape = rotate(shape, [6, -32, 35])
+    shape = translate(shape, thumborigin())
+    shape = translate(shape, [-51, -25, -11.5])
+    return shape
+
 
 def minidox_thumb_1x_layout(shape):
     return union([
@@ -1463,12 +1487,22 @@ def minidox_thumb_connectors():
                 key_place(web_post_bl(), 1, cornerrow),
                 minidox_thumb_tr_place(minidox_thumb_post_tr()),
                 key_place(web_post_br(), 1, cornerrow),
-                key_place(web_post_bl(), 2, lastrow),
-                minidox_thumb_tr_place(minidox_thumb_post_tr()),
-                key_place(web_post_bl(), 2, lastrow),
                 minidox_thumb_tr_place(minidox_thumb_post_br()),
-                key_place(web_post_br(), 2, lastrow),
-                key_place(web_post_bl(), 3, lastrow),
+                key_place(web_post_br(), 1, cornerrow),
+                key_place(web_post_bl(), 3, cornerrow),
+                minidox_thumb_tr_place(minidox_thumb_post_br()),
+            ]
+        )
+    )
+
+    # the dip on column 1
+    hulls.append(
+        triangle_hulls(
+            [
+                key_place(web_post_br(), 1, cornerrow),
+                key_place(web_post_bl(), 2, cornerrow),
+                key_place(web_post_bl(), 3, cornerrow),
+                key_place(web_post_br(), 2, cornerrow),
             ]
         )
     )
@@ -2401,7 +2435,7 @@ def right_wall(skeleton=False):
         skeleton=skeleton,
     )])
 
-    for i in range(cornerrow):
+    for i in range(lastrow - 1):
         y = i + 1
         shape = union([shape, key_wall_brace(
             lastcol, y - 1, 1, 0, web_post_br(), lastcol, y, 1, 0, web_post_tr(),
@@ -2438,14 +2472,13 @@ def left_wall(side='right', skeleton=False):
         skeleton=skeleton,
     )])
 
-    # for i in range(lastrow):
-    for i in range(cornerrow+1):
+    for i in range(lastrow):
         y = i
-        low = (y == (cornerrow))
+        low = (y == (lastrow-1))
         temp_shape1 = wall_brace(
             (lambda sh: left_key_place(sh, y, 1, side=side)), -1, 0, web_post(),
             (lambda sh: left_key_place(sh, y, -1, low_corner=low, side=side)), -1, 0, web_post(),
-        skeleton=skeleton and (y < (cornerrow)),
+        skeleton=skeleton and (y < (lastrow-1)),
         )
         shape = union([shape, temp_shape1])
 
@@ -2458,13 +2491,13 @@ def left_wall(side='right', skeleton=False):
 
         shape = union([shape, temp_shape2])
 
-    for i in range(cornerrow):
+    for i in range(lastrow - 1):
         y = i + 1
-        low = (y == (cornerrow))
+        low = (y == (lastrow-1))
         temp_shape1 = wall_brace(
             (lambda sh: left_key_place(sh, y - 1, -1, side=side)), -1, 0, web_post(),
             (lambda sh: left_key_place(sh, y, 1, side=side)), -1, 0, web_post(),
-            skeleton=skeleton and (y < (cornerrow)),
+            skeleton=skeleton and (y < (lastrow - 1)),
         )
         shape = union([shape, temp_shape1])
 
@@ -2485,22 +2518,18 @@ def front_wall(skeleton=False):
     shape = None
 
     shape = union([shape,key_wall_brace(
-        3, lastrow, 0, -1, web_post_bl(), 3, lastrow, 0.5, -1, web_post_br()
+        3, cornerrow, 0, -1, web_post_bl(), 3, cornerrow, 0, -1, web_post_br()
     )])
     shape = union([shape,key_wall_brace(
-        3, lastrow, 0.5, -1, web_post_br(), 4, cornerrow, .5, -1, web_post_bl()
+        3, cornerrow, 0, -1, web_post_br(), 4, cornerrow, 0, -1, web_post_bl()
     )])
-    shape = union([shape,key_wall_brace(
-        4, cornerrow, .5, -1, web_post_bl(), 4, cornerrow, 0, -1, web_post_br()
-    )])
-
-    for i in range(ncols - 5):
-        x = i + 5
-
+    for i in range(ncols - 4):
+        x = i + 4
         shape = union([shape,key_wall_brace(
             x, cornerrow, 0, -1, web_post_bl(), x, cornerrow, 0, -1, web_post_br()
         )])
-
+    for i in range(ncols - 5):
+        x = i + 5
         shape = union([shape, key_wall_brace(
             x, cornerrow, 0, -1, web_post_bl(), x - 1, cornerrow, 0, -1, web_post_br()
         )])
@@ -2579,7 +2608,7 @@ def default_thumb_walls(skeleton=False):
     shape = union([shape, wall_brace(default_thumb_ml_place, 0, 1, web_post_tl(), default_thumb_bl_place, 0, 1, web_post_tr())])
     shape = union([shape, wall_brace(default_thumb_bl_place, -1, 0, web_post_bl(), default_thumb_br_place, -1, 0, web_post_tl())])
     if default_1U_cluster:
-        shape = union([shape, wall_brace(default_thumb_tr_place, 0, -1, web_post_br(), (lambda sh: key_place(sh, 3, lastrow)), 0, -1, web_post_bl())])
+        shape = union([shape, wall_brace(default_thumb_tr_place, 0, -1, web_post_br(), (lambda sh: key_place(sh, 3, cornerrow)), 0, -1, web_post_bl())])
     else:
         shape = union([shape, wall_brace(default_thumb_tr_place, 0, -1, thumb_post_br(), (lambda sh: key_place(sh, 3, lastrow)), 0, -1, web_post_bl())])
 
@@ -2650,7 +2679,7 @@ def tbjs_thumb_connection(side='right', skeleton=False):
         triangle_hulls(
             [
                 key_place(web_post_bl(), 0, cornerrow),
-                left_key_place(web_post(), cornerrow, -1, side=side, low_corner=True),
+                left_key_place(web_post(), lastrow - 1, -1, side=side, low_corner=True),
                 # left_key_place(translate(web_post(), wall_locate1(-1, 0)), cornerrow, -1, low_corner=True),
                 tbjs_place(tbjs_post_tl()),
             ]
@@ -2711,7 +2740,7 @@ def tbjs_thumb_walls(skeleton=False):
 
     shape = union([shape, wall_brace(
         tbjs_place, -1.5, 0, tbjs_post_tl(),
-        (lambda sh: left_key_place(sh, cornerrow, -1, side=ball_side, low_corner=True)), -1, 0, web_post(),
+        (lambda sh: left_key_place(sh, lastrow - 1, -1, side=ball_side, low_corner=True)), -1, 0, web_post(),
     )])
     shape = union([shape, wall_brace(
         tbjs_place, -1.5, 0, tbjs_post_tl(),
@@ -2897,7 +2926,7 @@ def minidox_thumb_walls(skeleton=False):
     shape = union([shape, wall_brace(minidox_thumb_ml_place, -1, 0, minidox_thumb_post_tl(), minidox_thumb_ml_place, 0, 1, minidox_thumb_post_tl())])
     # thumb, tweeners
     shape = union([shape, wall_brace(minidox_thumb_ml_place, 0, 1, minidox_thumb_post_tr(), minidox_thumb_ml_place, 0, 1, minidox_thumb_post_tl())])
-    shape = union([shape, wall_brace(minidox_thumb_tr_place, 0, -1, minidox_thumb_post_br(), (lambda sh: key_place(sh, 3, lastrow)), 0, -1, web_post_bl())])
+    shape = union([shape, wall_brace(minidox_thumb_tr_place, 0, -1, minidox_thumb_post_br(), (lambda sh: key_place(sh, 3, cornerrow)), 0, -1, web_post_bl())])
 
 
     return shape
@@ -3133,9 +3162,9 @@ external_start = list(
 
 def external_mount_hole():
     print('external_mount_hole()')
-    shape = box(external_holder_width, 20.0, external_holder_height+.1)
-    undercut = box(external_holder_width+8, 10.0, external_holder_height+8+.1)
-    shape = union([shape, translate(undercut,(0, -5, 0))])
+    shape = box(external_holder_width, 20.0, external_holder_height)
+    undercut = box(external_holder_width+1.8, 1.4, external_holder_height)
+    shape = union([shape, translate(undercut,(0, 0.4, 0))])
 
     shape = translate(shape,
         (
@@ -3834,12 +3863,9 @@ def screw_insert_all_shapes(bottom_radius, top_radius, height, offset=0, side='r
     print('screw_insert_all_shapes()')
     shape = (
         translate(screw_insert(0, 0, bottom_radius, top_radius, height, side=side), (0, 0, offset)),
-        translate(screw_insert(0, cornerrow, bottom_radius, top_radius, height, side=side), (0, left_wall_lower_y_offset, offset)),
-        translate(screw_insert(3, lastrow, bottom_radius, top_radius, height, side=side), (0, 0, offset)),
-        translate(screw_insert(3, 0, bottom_radius, top_radius, height, side=side), (0,0, offset)),
-        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height, side=side), (0, 0, offset)),
-        translate(screw_insert(lastcol, cornerrow, bottom_radius, top_radius, height, side=side), (0, 0, offset)),
-        # translate(screw_insert_thumb(bottom_radius, top_radius, height), (0, 0, offset)),
+        translate(screw_insert(0, lastrow-1, bottom_radius, top_radius, height, side=side), (0, left_wall_lower_y_offset, offset)),
+        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height, side=side), (2, 6, offset)),
+        translate(screw_insert(lastcol, lastrow-1, bottom_radius, top_radius, height, side=side), (-3, -12, offset)),
     )
 
     return shape
@@ -3905,7 +3931,7 @@ def wire_posts():
     shape = union([shape, default_thumb_ml_place(wire_post(1, 0).translate([5, 0, -2]))])
 
     for column in range(lastcol):
-        for row in range(cornerrow):
+        for row in range(lastrow - 1):
             shape = union([
                 shape,
                 key_place(wire_post(1, 0).translate([-5, 0, 0]), column, row),
@@ -4019,21 +4045,12 @@ def model_side(side="right"):
 
     has_trackball = False
     if ('TRACKBALL' in thumb_style) and (side == ball_side or ball_side == 'both'):
-        print("Has Trackball")
         tbprecut, tb, tbcutout, sensor, ball = generate_trackball_in_cluster()
         has_trackball = True
         thumb_section = difference(thumb_section, [tbprecut])
-        if debug_exports:
-            export_file(shape=thumb_section, fname=path.join(r"..", "things", r"debug_thumb_test_1_shape".format(side)))
         thumb_section = union([thumb_section, tb])
-        if debug_exports:
-            export_file(shape=thumb_section, fname=path.join(r"..", "things", r"debug_thumb_test_2_shape".format(side)))
         thumb_section = difference(thumb_section, [tbcutout])
-        if debug_exports:
-            export_file(shape=thumb_section, fname=path.join(r"..", "things", r"debug_thumb_test_3_shape".format(side)))
         thumb_section = union([thumb_section, sensor])
-        if debug_exports:
-            export_file(shape=thumb_section, fname=path.join(r"..", "things", r"debug_thumb_test_4_shape".format(side)))
 
     if plate_pcb_clear:
         thumb_section = difference(thumb_section, [thumb_pcb_plate_cutouts(side=side)])
@@ -4042,8 +4059,8 @@ def model_side(side="right"):
     block = translate(block, (0, 0, -20))
     main_shape = difference(main_shape, [block])
     thumb_section = difference(thumb_section, [block])
-    if debug_exports:
-        export_file(shape=thumb_section, fname=path.join(r"..", "things", r"debug_thumb_test_5_shape".format(side)))
+
+
 
     if separable_thumb:
         thumb_section = difference(thumb_section, [main_shape])
@@ -4053,8 +4070,6 @@ def model_side(side="right"):
                 thumb_section = add([thumb_section, ball])
     else:
         main_shape = union([main_shape, thumb_section])
-        if debug_exports:
-            export_file(shape=main_shape, fname=path.join(r"..", "things", r"debug_thumb_test_6_shape".format(side)))
         if show_caps:
             main_shape = add([main_shape, thumbcaps(side=side)])
             if has_trackball:

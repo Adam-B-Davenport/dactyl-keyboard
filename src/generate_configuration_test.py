@@ -10,8 +10,8 @@ r2d = 180 / pi
 
 shape_config = {
 
-    'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
-    # 'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    # 'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
 
 
     ######################
@@ -24,7 +24,7 @@ shape_config = {
     'show_caps': False,
     'show_pcbs': False, #only runs if caps are shown, easist place to initially inject geometry
 
-    'nrows':  5, #5,  # key rows
+    'nrows':  6, #5,  # key rows
     'ncols':  6, #6,  # key columns
 
     'alpha':  pi / 12.0,  # curvature of the columns
@@ -38,8 +38,6 @@ shape_config = {
 
     'column_style_gt5':  "orthographic",
     'column_style':  "standard",  # options include :standard, :orthographic, and :fixed
-    'reduced_outer_keys': True,
-
 
     'thumb_offsets':  [6, -3, 7],
     'keyboard_z_offset':  (
@@ -48,7 +46,7 @@ shape_config = {
 
 
     'extra_width': 2.5,  # extra space between the base of keys# original= 2
-    'extra_height': 1.0,  # original= 0.5
+    'extra_height': 0.0,  # original= 0.5
 
 
     'web_thickness': 4.0 + 1.1,
@@ -61,10 +59,10 @@ shape_config = {
     ##############################
 
     # 'DEFAULT' 6-key, 'MINI' 5-key, 'CARBONFET' 6-key, 'MINIDOX' 3-key, 'TRACKBALL_ORBYL', 'TRACKBALL_CJ'
-    'thumb_style': 'CARBONFET',
+    'thumb_style': 'MINIDOX',
     'default_1U_cluster': True, # only used with default, makes top right thumb cluster key 1U
     # Thumb key size.  May need slight oversizing, check w/ caps.  Additional spacing will be automatically added for larger keys.
-    'minidox_Usize': 1.6,
+    'minidox_Usize': 1.0,
     # Thumb plate rotations, anything other than 90 degree increments WILL NOT WORK.
 
     # Screw locations and extra screw locations for separable thumb, all from thumb origin
@@ -187,7 +185,7 @@ shape_config = {
     ##############################
     'pinky_1_5U': False,  # LEAVE AS FALSE, CURRENTLY BROKEN
     'first_1_5U_row': 0,
-    'last_1_5U_row': 5,
+    'last_1_5U_row': 0,
     ##############################
 
 
@@ -267,7 +265,7 @@ shape_config = {
     # 'SLIDING' = Features to slide the OLED in place and use a pin or block to secure from underneath.
     # 'CLIP' = Features to set the OLED in a frame a snap a bezel down to hold it in place.
 
-    'oled_mount_type':  'NONE',
+    'oled_mount_type':  'CLIP',
     'oled_center_row': 1.25, # if not None, this will override the oled_mount_location_xyz and oled_mount_rotation_xyz settings
     'oled_translation_offset': (0, 0, 4), # Z offset tweaks are expected depending on curvature and OLED mount choice.
     'oled_rotation_offset': (0, 0, 0),

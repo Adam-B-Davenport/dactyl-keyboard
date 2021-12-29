@@ -10,8 +10,8 @@ r2d = 180 / pi
 
 shape_config = {
 
-    'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
-    # 'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    # 'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
 
 
     ######################
@@ -24,34 +24,31 @@ shape_config = {
     'show_caps': False,
     'show_pcbs': False, #only runs if caps are shown, easist place to initially inject geometry
 
-    'nrows':  5, #5,  # key rows
-    'ncols':  6, #6,  # key columns
+    'nrows':  4, #5,  # key rows
+    'ncols':  5, #6,  # key columns
 
-    'alpha':  pi / 12.0,  # curvature of the columns
-    'beta':  pi / 36.0,  # curvature of the rows
+    'alpha':  pi / 9.0,  # curvature of the columns
+    'beta':  pi / 42.0,  # curvature of the rows
     'centercol':  3,  # controls left_right tilt / tenting (higher number is more tenting)
     'centerrow_offset':  3,  # rows from max, controls front_back tilt
-    'tenting_angle':  pi / 12.0,  # or, change this for more precise tenting control
+    'tenting_angle':  0.55,  # or, change this for more precise tenting control
 
     # symmetry states if it is a symmetric or asymmetric bui.  If asymmetric it doubles the generation time.
     'symmetry':  "symmetric",  # "asymmetric" or "symmetric"
 
     'column_style_gt5':  "orthographic",
     'column_style':  "standard",  # options include :standard, :orthographic, and :fixed
-    'reduced_outer_keys': True,
-
 
     'thumb_offsets':  [6, -3, 7],
     'keyboard_z_offset':  (
-        11  # controls overall height# original=9 with centercol=3# use 16 for centercol=2
+        17.5  # controls overall height# original=9 with centercol=3# use 16 for centercol=2
     ),
 
-
     'extra_width': 2.5,  # extra space between the base of keys# original= 2
-    'extra_height': 1.0,  # original= 0.5
+    'extra_height': -3.6,  # original= 0.5
 
 
-    'web_thickness': 4.0 + 1.1,
+    'web_thickness': 4.0,
     'post_size': 0.1,
     # post_adj':  post_size / 2
     'post_adj': 0,
@@ -61,10 +58,10 @@ shape_config = {
     ##############################
 
     # 'DEFAULT' 6-key, 'MINI' 5-key, 'CARBONFET' 6-key, 'MINIDOX' 3-key, 'TRACKBALL_ORBYL', 'TRACKBALL_CJ'
-    'thumb_style': 'DEFAULT',
+    'thumb_style': 'MINIDOX',
     'default_1U_cluster': True, # only used with default, makes top right thumb cluster key 1U
     # Thumb key size.  May need slight oversizing, check w/ caps.  Additional spacing will be automatically added for larger keys.
-    'minidox_Usize': 1.6,
+    'minidox_Usize': 1.0,
     # Thumb plate rotations, anything other than 90 degree increments WILL NOT WORK.
 
     # Screw locations and extra screw locations for separable thumb, all from thumb origin
@@ -74,7 +71,7 @@ shape_config = {
     'default_separable_thumb_screw_xy_locations': [[-21, -58]],
     'mini_thumb_screw_xy_locations': [[-29, -52]],
     'mini_separable_thumb_screw_xy_locations': [[-29, -52], [-62, 10], [12, -25]],
-    'minidox_thumb_screw_xy_locations': [[-37, -34]],
+    'minidox_thumb_screw_xy_locations': [[-37, -30.0]],
     'minidox_separable_thumb_screw_xy_locations': [[-37, -34], [-62, 12], [10, -25]],
     'carbonfet_thumb_screw_xy_locations': [[-48, -37]],
     'carbonfet_separable_thumb_screw_xy_locations': [[-48, -37], [-52, 10], [12, -35]],
@@ -194,19 +191,19 @@ shape_config = {
 
 
 
-    'wall_z_offset':  15,  # length of the first downward_sloping part of the wall
-    'wall_x_offset':  5,  # offset in the x and/or y direction for the first downward_sloping part of the wall (negative)
-    'wall_y_offset':  6,  # offset in the x and/or y direction for the first downward_sloping part of the wall (negative)
-    'left_wall_x_offset':  12,  # specific values for the left side due to the minimal wall.
-    'left_wall_z_offset':  3,  # specific values for the left side due to the minimal wall.
+    'wall_z_offset':  3,  # length of the first downward_sloping part of the wall
+    'wall_x_offset':  3,  # offset in the x and/or y direction for the first downward_sloping part of the wall (negative)
+    'wall_y_offset':  3,  # offset in the x and/or y direction for the first downward_sloping part of the wall (negative)
+    'left_wall_x_offset':  8,  # specific values for the left side due to the minimal wall.
+    'left_wall_z_offset':  0,  # specific values for the left side due to the minimal wall.
     'left_wall_lower_x_offset': 0,  # specific values for the lower left corner.
     'left_wall_lower_y_offset': 0,  # specific values for the lower left corner.
     'left_wall_lower_z_offset': 0,
-    'wall_thickness':  4.5,  # wall thickness parameter used on upper/mid stage of the wall
-    'wall_base_y_thickness':  4.5,  # wall thickness at the lower stage
-    'wall_base_x_thickness':  4.5,  # wall thickness at the lower stage
+    'wall_thickness':  3.5,  # wall thickness parameter used on upper/mid stage of the wall
+    'wall_base_y_thickness':  3.5,  # wall thickness at the lower stage
+    'wall_base_x_thickness':  3.5,  # wall thickness at the lower stage
 
-    'wall_base_back_thickness':  4.5,  # wall thickness at the lower stage in the specifically in back for interface.
+    'wall_base_back_thickness':  3.5,  # wall thickness at the lower stage in the specifically in back for interface.
 
     ## Settings for column_style == :fixed
     ## The defaults roughly match Maltron settings
@@ -233,7 +230,7 @@ shape_config = {
     # 'HS_UNDERCUT' = hot swap underside with undercut. Does not generate properly.  Hot swap step needs to be modified.
     # 'HS_NOTCH' = hot swap underside with notch.  Does not generate properly.  Hot swap step needs to be modified.
     # 'plate_style':  'NUB',
-    'plate_style': 'NOTCH',
+    'plate_style': 'HOLE',
 
     'hole_keyswitch_height':  14.0,
     'hole_keyswitch_width':  14.0,
@@ -248,7 +245,7 @@ shape_config = {
     'sa_profile_key_height':  12.7,
     'sa_length': 18.5,
     'sa_double_length': 37.5,
-    'plate_thickness':  4 + 1.1,
+    'plate_thickness':  2.5,
 
     'plate_rim': 1.5 + 0.5,
     # Undercut style dimensions
@@ -270,7 +267,7 @@ shape_config = {
     # 'SLIDING' = Features to slide the OLED in place and use a pin or block to secure from underneath.
     # 'CLIP' = Features to set the OLED in a frame a snap a bezel down to hold it in place.
 
-    'oled_mount_type':  'CLIP',
+    'oled_mount_type':  'NONE',
     'oled_center_row': 1.25, # if not None, this will override the oled_mount_location_xyz and oled_mount_rotation_xyz settings
     'oled_translation_offset': (0, 0, 4), # Z offset tweaks are expected depending on curvature and OLED mount choice.
     'oled_rotation_offset': (0, 0, 0),
@@ -352,7 +349,7 @@ shape_config = {
 
     'screws_offset': 'INSIDE', # 'OUTSIDE', 'INSIDE', 'ORIGINAL'
 
-    'screw_insert_height': 3.8,
+    'screw_insert_height': 3.0,
 
     # 'screw_insert_bottom_radius': 5.31 / 2,  #Designed for inserts
     # 'screw_insert_top_radius': 5.1 / 2,  #Designed for inserts
@@ -360,7 +357,7 @@ shape_config = {
     'screw_insert_bottom_radius': 2.5 / 2,  # Designed for self tapping
     'screw_insert_top_radius': 2.5 / 2,  # Designed for self tapping
 
-    'screw_insert_outer_radius': 4.25,  # Common to keep interface to base
+    'screw_insert_outer_radius': 3.25,  # Common to keep interface to base
 
     # Does anyone even use these?  I think they just get in the way.
     'wire_post_height': 7,
@@ -382,10 +379,10 @@ shape_config = {
     # 'NONE' = No openings in the back.
     'controller_mount_type':  'EXTERNAL',
 
-    'external_holder_height':  12.5,
-    'external_holder_width':  28.75,
-    'external_holder_xoffset': -5.0,
-    'external_holder_yoffset': -4.5, #Tweak this value to get the right undercut for the tray engagement.
+    'external_holder_height':  16.6,
+    'external_holder_width':  28.2,
+    'external_holder_xoffset': -9.7,
+    'external_holder_yoffset': -2.5, #Tweak this value to get the right undercut for the tray engagement.
 
     # Offset is from the top inner corner of the top inner key.
 
@@ -426,7 +423,7 @@ shape_config = {
     ###################################
     ## HOLES ON PLATE FOR PCB MOUNT
     ###################################
-    'plate_holes':  True,
+    'plate_holes':  False,
     'plate_holes_xy_offset': (0.0, 0.0),
     'plate_holes_width': 14.3,
     'plate_holes_height': 14.3,
@@ -455,12 +452,12 @@ shape_config = {
     ####################################
 
     'column_offsets':  [
-        [0, 0, 0],
+        [2.7, 0, -0.5],
         [0, 0, 0],
         [0, 2.82, -4.5],
         [0, 0, 0],
-        [0, -6, 5],# REDUCED STAGGER
-        [0, -6, 5],# REDUCED STAGGER
+        [5, -13, 5],# REDUCED STAGGER
+        [0, -13, 5],# REDUCED STAGGER
         [0, -6, 5],# NOT USED IN MOST FORMATS (7th column)
     ],
 

@@ -58,7 +58,7 @@ def union(shapes):
             if shape is None:
                 shape = item
             else:
-                shape = shape.union(item)
+                shape = shape.union(item, clean=False)
     return shape
 
 

@@ -5,12 +5,12 @@
     "show_caps": false,
     "show_pcbs": false,
     "nrows": 4,
-    "ncols": 5,
-    "alpha": 0.3490655555555555,
-    "beta": 0.0747997619047619,
+    "ncols": 6,
+    "alpha": 0.26179916666666664,
+    "beta": 0.08726638888888888,
     "centercol": 3,
     "centerrow_offset": 3,
-    "tenting_angle": 0.55,
+    "tenting_angle": 0.26179916666666664,
     "symmetry": "symmetric",
     "column_style_gt5": "orthographic",
     "column_style": "standard",
@@ -19,15 +19,15 @@
         -3,
         7
     ],
-    "keyboard_z_offset": 17.5,
+    "keyboard_z_offset": 11,
     "extra_width": 2.5,
-    "extra_height": -3.6,
-    "web_thickness": 4.0,
+    "extra_height": 1.0,
+    "web_thickness": 5.1,
     "post_size": 0.1,
     "post_adj": 0,
     "thumb_style": "MINIDOX",
     "default_1U_cluster": true,
-    "minidox_Usize": 1.0,
+    "minidox_Usize": 1.6,
     "default_thumb_screw_xy_locations": [
         [
             -21,
@@ -63,7 +63,7 @@
     "minidox_thumb_screw_xy_locations": [
         [
             -37,
-            -30.0
+            -34
         ]
     ],
     "minidox_separable_thumb_screw_xy_locations": [
@@ -278,18 +278,18 @@
     "first_1_5U_row": 0,
     "last_1_5U_row": 5,
     "skeletal": false,
-    "wall_z_offset": 3,
-    "wall_x_offset": 3,
-    "wall_y_offset": 3,
-    "left_wall_x_offset": 8,
-    "left_wall_z_offset": 0,
+    "wall_z_offset": 15,
+    "wall_x_offset": 5,
+    "wall_y_offset": 6,
+    "left_wall_x_offset": 12,
+    "left_wall_z_offset": 3,
     "left_wall_lower_x_offset": 0,
     "left_wall_lower_y_offset": 0,
     "left_wall_lower_z_offset": 0,
-    "wall_thickness": 3.5,
-    "wall_base_y_thickness": 3.5,
-    "wall_base_x_thickness": 3.5,
-    "wall_base_back_thickness": 3.5,
+    "wall_thickness": 4.5,
+    "wall_base_y_thickness": 4.5,
+    "wall_base_x_thickness": 4.5,
+    "wall_base_back_thickness": 4.5,
     "fixed_angles": [
         0.17453277777777776,
         0.17453277777777776,
@@ -318,7 +318,7 @@
         17.5
     ],
     "fixed_tenting": 0.0,
-    "plate_style": "HOLE",
+    "plate_style": "NOTCH",
     "hole_keyswitch_height": 14.0,
     "hole_keyswitch_width": 14.0,
     "nub_keyswitch_height": 14.4,
@@ -329,7 +329,7 @@
     "sa_profile_key_height": 12.7,
     "sa_length": 18.5,
     "sa_double_length": 37.5,
-    "plate_thickness": 2.5,
+    "plate_thickness": 5.1,
     "plate_rim": 2.0,
     "clip_thickness": 1.1,
     "clip_undercut": 1.0,
@@ -438,18 +438,18 @@
         }
     },
     "screws_offset": "INSIDE",
-    "screw_insert_height": 3.0,
+    "screw_insert_height": 3.8,
     "screw_insert_bottom_radius": 1.25,
     "screw_insert_top_radius": 1.25,
-    "screw_insert_outer_radius": 3.25,
+    "screw_insert_outer_radius": 4.25,
     "wire_post_height": 7,
     "wire_post_overhang": 3.5,
     "wire_post_diameter": 2.6,
     "controller_mount_type": "EXTERNAL",
-    "external_holder_height": 16.6,
-    "external_holder_width": 28.2,
-    "external_holder_xoffset": -9.7,
-    "external_holder_yoffset": -2.5,
+    "external_holder_height": 12.5,
+    "external_holder_width": 28.75,
+    "external_holder_xoffset": -5.0,
+    "external_holder_yoffset": -4.5,
     "pcb_mount_ref_offset": [
         0,
         -5,
@@ -505,7 +505,7 @@
     "base_rim_thickness": 5.0,
     "screw_cbore_diameter": 6.0,
     "screw_cbore_depth": 2.5,
-    "plate_holes": false,
+    "plate_holes": true,
     "plate_holes_xy_offset": [
         0.0,
         0.0
@@ -533,9 +533,9 @@
     "pcb_hole_pattern_height": 14.3,
     "column_offsets": [
         [
-            2.7,
             0,
-            -0.5
+            0,
+            0
         ],
         [
             0,
@@ -553,13 +553,13 @@
             0
         ],
         [
-            5,
-            -13,
+            0,
+            -6,
             5
         ],
         [
             0,
-            -13,
+            -6,
             5
         ],
         [

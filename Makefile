@@ -5,7 +5,7 @@ current_dir := $(dir $(mkfile_path))
 
 source_dir := ${current_dir}"src"
 artifact_dir := ${current_dir}"things"
-config_dir := ${current_dir}"configs"
+config_dir := ${current_dir}"src"
 
 DOCKER_CMD := "docker"
 .DEFAULT_GOAL := help
@@ -16,7 +16,7 @@ help: ## Will print this help.
 
 .DELETE_ON_ERROR:
 
-build: build-container config build-models ## Build everything. Executes the complete pipeline.
+build: build-container config build-dactyl ## Build everything. Executes the complete pipeline.
 	@echo "\nAll done"
 .PHONY: build
 
@@ -40,13 +40,6 @@ config: check-requirements ## Generate configuration.
 .PHONY: config
 
 build-models: check-requirements ## Build models.
-	@echo "\nGenerate configured model..\n" && \
-	cd ${current_dir} && \
-	${DOCKER_CMD} run --rm --name DM-run -v ${source_dir}:/app/src -v ${artifact_dir}:/app/things -v ${config_dir}:/app/configs dactyl-keyboard python3 -i dactyl_manuform.py && \
-	echo "Done"
-.PHONY: config
-
-build-models: check-requirements ## Build models.
 	@echo "\nGenerate release models..\n" && \
 	cd ${current_dir} && \
 	${DOCKER_CMD} run --rm --name DM-release-build -v ${source_dir}:/app/src -v ${artifact_dir}:/app/things -v ${config_dir}:/app/configs dactyl-keyboard python3 -i model_builder.py && \
@@ -59,3 +52,7 @@ shell: check-requirements ## Open an interactive shell inside a container.
 	echo "\nBye!"
 .PHONY: shell
 
+build-dactyl: ## build my variant
+	cd ${current_dir} && \
+	${DOCKER_CMD} run --rm --name DM-release-build -v ${source_dir}:/app/src -v ${artifact_dir}:/app/things dactyl-keyboard bash runner.sh > /dev/null
+.PHONY: dactyl
