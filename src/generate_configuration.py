@@ -464,6 +464,19 @@ shape_config = {
         [0, -6, 5],# NOT USED IN MOST FORMATS (7th column)
     ],
 
+    ###################################
+    ## EXPERIMENTAL - Column Rotation
+    ####################################
+
+    'column_rotation': [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        ],
+
 }
 
     ####################################

@@ -1,12 +1,12 @@
 import numpy as np
 from numpy import pi
 import os.path as path
-import getopt, sys
+import getopt
+import sys
 import json
 import os
 import copy
 
-from scipy.spatial import ConvexHull as sphull
 
 def deg2rad(degrees: float) -> float:
     return degrees * pi / 180
@@ -423,6 +423,15 @@ def rotate_around_y(position, angle):
     return np.matmul(t_matrix, position)
 
 
+def rotate_around_z(position: float, angle: np.ndarray) -> np.ndarray:
+    t_matrix = np.array(
+        [
+            [np.cos(angle), 0, np.sin(angle)],
+            [-np.sin(angle), 0, np.cos(angle)],
+            [0, 1, 0],
+        ]
+    )
+    return np.matmul(t_matrix, position)
 
 
 def apply_key_geometry(
@@ -430,6 +439,7 @@ def apply_key_geometry(
         translate_fn,
         rotate_x_fn,
         rotate_y_fn,
+        rotate_z_fn,
         column,
         row,
         column_style=column_style,
@@ -467,6 +477,8 @@ def apply_key_geometry(
         shape = rotate_y_fn(shape, column_angle)
         shape = translate_fn(shape, [0, 0, column_radius])
         shape = translate_fn(shape, column_offset(column))
+        if rotate_z_fn and column_rotation[column]:
+            shape = rotate_x_fn(shape, [column_rotation[column]])
 
     shape = rotate_y_fn(shape, tenting_angle)
     shape = translate_fn(shape, [0, 0, keyboard_z_offset])
@@ -484,9 +496,14 @@ def y_rot(shape, angle):
     return rotate(shape, [0, rad2deg(angle), 0])
 
 
+def z_rot(shape, angle):
+    # debugprint('y_rot()')
+    return rotate(shape, [0, 0, rad2deg(angle)])
+
+
 def key_place(shape, column, row):
     debugprint('key_place()')
-    return apply_key_geometry(shape, translate, x_rot, y_rot, column, row)
+    return apply_key_geometry(shape, translate, x_rot, y_rot, z_rot, column, row)
 
 
 def add_translate(shape, xyz):
@@ -500,7 +517,7 @@ def add_translate(shape, xyz):
 def key_position(position, column, row):
     debugprint('key_position()')
     return apply_key_geometry(
-        position, add_translate, rotate_around_x, rotate_around_y, column, row
+        position, add_translate, rotate_around_x, rotate_around_y, None, column, row
     )
 
 
